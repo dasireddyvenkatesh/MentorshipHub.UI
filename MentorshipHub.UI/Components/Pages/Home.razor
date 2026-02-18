@@ -1,0 +1,43 @@
+﻿@page "/"
+@using MentorshipHub.UI.Wrappers
+@using MudBlazor
+
+
+@code {
+    DateTime offerEnd = DateTime.UtcNow.AddHours(6);
+}
+
+<AuthWrapper />
+<PromoBarWrapper OfferEndsAt="@offerEnd"
+                 SlotsLeft="50"
+                 RegisterUrl="/register" />
+<HeroContentWrapper />
+<WhySection />
+<CareerGrowthPlatformWrapper />
+
+
+<JobOpportunitiesWrapper />
+
+<HowItWorksWrapper />
+
+<LimitedOfferWrapper TargetDate="@DateTime.Now.AddDays(7)" />
+
+<CareerGrowthProofWrapper />
+
+
+<AnimateOnVisible>
+
+    <CommunityStatsWrapper Mentors="500"
+                           Members="10000"
+                           JobsPosted="1000"
+                           SuccessStories="250" />
+
+</AnimateOnVisible>
+
+<MentorsWrapper />
+
+<FAQWrapper />
+<FooterWrapper/>
+
+
+

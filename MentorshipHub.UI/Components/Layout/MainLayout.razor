@@ -1,0 +1,26 @@
+﻿@using MudBlazor
+@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="_customTheme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudMainContent>
+    <MudContainer Class="pa-0 ma-0">
+        @Body
+    </MudContainer>
+</MudMainContent>
+
+
+@code {
+    private MudTheme _customTheme = new MudTheme()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = "#0f2942",      // Navy Blue for the Sign Up button
+            AppbarBackground = "#ffffff", // Pure white header background
+            Surface = "#ffffff",
+            TextPrimary = "#0f2942",
+        }
+    };
+}
