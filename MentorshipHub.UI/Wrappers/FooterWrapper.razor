@@ -1,64 +1,71 @@
 ﻿@using MudBlazor
 
-<footer class="footer pt-4 pb-4">
+@if (isShow)
+{
+    <footer class="footer pt-4 pb-4">
 
-    <MudContainer MaxWidth="MaxWidth.Large">
+        <MudContainer MaxWidth="MaxWidth.Large">
 
-        <MudGrid GutterSize="6" Class="footer-grid">
+            <MudGrid GutterSize="6" Class="footer-grid">
 
-            <!-- BRAND -->
-            <MudItem xs="12" md="4">
+                <!-- BRAND -->
+                <MudItem xs="12" md="4">
 
-                <MudText Class="footer-logo">
-                    IT Career <span>& Mentorship Hub</span>
-                </MudText>
+                    <MudText Class="footer-logo">
+                        IT Career <span>& Mentorship Hub</span>
+                    </MudText>
 
-                <MudText Class="footer-desc">
-                    Connecting IT professionals for growth through mentorship and community.
-                </MudText>
+                    <MudText Class="footer-desc">
+                        Connecting IT professionals for growth through mentorship and community.
+                    </MudText>
 
-            </MudItem>
+                </MudItem>
 
-            <!-- PLATFORM -->
-            <MudItem xs="6" sm="4" md="2">
-                <MudText Class="footer-title">Platform</MudText>
+                <!-- PLATFORM -->
+                <MudItem xs="6" sm="4" md="2">
+                    <MudText Class="footer-title">Platform</MudText>
 
-                <MudStack Spacing="1">
-                    <MudLink Href="/mentors" Class="footer-link">Find Mentors</MudLink>
-                    <MudLink Href="/community" Class="footer-link">Community</MudLink>
-                    <MudLink Href="/resources" Class="footer-link">Resources</MudLink>
-                    <MudLink Href="/jobs" Class="footer-link">Job Portal</MudLink>
-                </MudStack>
-            </MudItem>
+                    <MudStack Spacing="1">
+                        <MudLink Href="/mentors" Class="footer-link">Find Mentors</MudLink>
+                        <MudLink Href="/community" Class="footer-link">Community</MudLink>
+                        <MudLink Href="/resources" Class="footer-link">Resources</MudLink>
+                        <MudLink Href="/jobs" Class="footer-link">Job Portal</MudLink>
+                    </MudStack>
+                </MudItem>
 
-            <!-- COMPANY -->
-            <MudItem xs="6" sm="4" md="2">
-                <MudText Class="footer-title">Company</MudText>
+                <!-- COMPANY -->
+                <MudItem xs="6" sm="4" md="2">
+                    <MudText Class="footer-title">Company</MudText>
 
-                <MudStack Spacing="1">
-                    <MudLink Href="/about" Class="footer-link">About</MudLink>
-                    <MudLink Href="/contact" Class="footer-link">Contact</MudLink>
-                </MudStack>
-            </MudItem>
+                    <MudStack Spacing="1">
+                        <MudLink Href="/about" Class="footer-link">About</MudLink>
+                        <MudLink Href="/contact" Class="footer-link">Contact</MudLink>
+                    </MudStack>
+                </MudItem>
 
-            <!-- LEGAL -->
-            <MudItem xs="6" sm="4" md="2">
-                <MudText Class="footer-title">Legal</MudText>
+                <!-- LEGAL -->
+                <MudItem xs="6" sm="4" md="2">
+                    <MudText Class="footer-title">Legal</MudText>
 
-                <MudStack Spacing="1">
-                    <MudLink Href="/privacy" Class="footer-link">Privacy Policy</MudLink>
-                    <MudLink Href="/terms" Class="footer-link">Terms of Service</MudLink>
-                </MudStack>
-            </MudItem>
+                    <MudStack Spacing="1">
+                        <MudLink Href="/privacy" Class="footer-link">Privacy Policy</MudLink>
+                        <MudLink Href="/terms" Class="footer-link">Terms of Service</MudLink>
+                    </MudStack>
+                </MudItem>
 
-        </MudGrid>
+            </MudGrid>
 
-        <MudDivider Class="footer-divider" />
+            <MudDivider Class="footer-divider" />
 
-        <MudText Align="Align.Center" Class="footer-copy">
-            © @DateTime.Now.Year IT Career & Mentorship Hub. All rights reserved.
-        </MudText>
+            <MudText Align="Align.Center" Class="footer-copy">
+                © @DateTime.Now.Year IT Career & Mentorship Hub. All rights reserved.
+            </MudText>
 
-    </MudContainer>
+        </MudContainer>
 
-</footer>
+    </footer>
+}
+
+@code {
+    [Parameter] public bool isShow { get; set; } = true;
+}

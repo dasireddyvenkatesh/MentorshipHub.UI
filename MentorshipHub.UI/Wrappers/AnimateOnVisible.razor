@@ -4,13 +4,18 @@
 @implements IAsyncDisposable
 @using Microsoft.AspNetCore.Components.Web
 
-<CascadingValue Value="isVisible">
-    <div @ref="elementRef">
-        @ChildContent
-    </div>
-</CascadingValue>
+@if (isShow)
+{
+    <CascadingValue Value="isVisible">
+        <div @ref="elementRef">
+            @ChildContent
+        </div>
+    </CascadingValue>
+}
 
 @code {
+
+    [Parameter] public bool isShow { get; set; } = true;
     private ElementReference elementRef;
     private DotNetObjectReference<AnimateOnVisible>? objRef;
 

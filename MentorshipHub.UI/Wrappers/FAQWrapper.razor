@@ -1,50 +1,55 @@
 ﻿@using MudBlazor
 
-<section class="faq-section pt-4 pb-4">
+@if (isShow)
+{
+    <section class="faq-section pt-4 pb-4">
 
-    <MudContainer MaxWidth="MaxWidth.Medium">
+        <MudContainer MaxWidth="MaxWidth.Medium">
 
-        <!-- HEADER -->
-        <MudStack AlignItems="AlignItems.Center"
-                  Spacing="1"
-                  Class="text-center faq-header">
+            <!-- HEADER -->
+            <MudStack AlignItems="AlignItems.Center"
+                      Spacing="1"
+                      Class="text-center faq-header">
 
-            <MudText Typo="Typo.h4" Class="faq-title">
-                <MudIcon Icon="@Icons.Material.Outlined.HelpOutline"
-                         Class="me-2 faq-title-icon" />
-                Frequently Asked Questions
-            </MudText>
+                <MudText Typo="Typo.h4" Class="faq-title">
+                    <MudIcon Icon="@Icons.Material.Outlined.HelpOutline"
+                             Class="me-2 faq-title-icon" />
+                    Frequently Asked Questions
+                </MudText>
 
-            <MudText Class="faq-subtitle">
-                Got questions? We've got answers.
-            </MudText>
+                <MudText Class="faq-subtitle">
+                    Got questions? We've got answers.
+                </MudText>
 
-        </MudStack>
+            </MudStack>
 
-        <!-- FAQ ACCORDION -->
-        <MudExpansionPanels Elevation="0"
-                            MultiExpansion="true"
-                            Class="faq-panels">
+            <!-- FAQ ACCORDION -->
+            <MudExpansionPanels Elevation="0"
+                                MultiExpansion="true"
+                                Class="faq-panels">
 
-            @foreach (var item in Faqs)
-            {
-                <MudExpansionPanel Text="@item.Question"
-                                   Class="faq-panel">
+                @foreach (var item in Faqs)
+                {
+                    <MudExpansionPanel Text="@item.Question"
+                                       Class="faq-panel">
 
-                    <MudText Class="faq-answer">
-                        @item.Answer
-                    </MudText>
+                        <MudText Class="faq-answer">
+                            @item.Answer
+                        </MudText>
 
-                </MudExpansionPanel>
-            }
+                    </MudExpansionPanel>
+                }
 
-        </MudExpansionPanels>
+            </MudExpansionPanels>
 
-    </MudContainer>
+        </MudContainer>
 
-</section>
+    </section>
+}
 
 @code {
+
+    [Parameter] public bool isShow { get; set; } = true;
     public record FaqItem(string Question, string Answer);
 
     List<FaqItem> Faqs = new()

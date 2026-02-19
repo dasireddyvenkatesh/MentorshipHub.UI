@@ -1,56 +1,60 @@
 ﻿@using MudBlazor
 
-<section class="stats-section pt-4 pb-4">
+@if (isShow)
+{
 
-    <MudContainer MaxWidth="MaxWidth.Large">
+    <section class="stats-section pt-4 pb-4">
 
-        <!-- HEADER -->
-        <MudStack AlignItems="AlignItems.Center" Class="text-center stats-header">
+        <MudContainer MaxWidth="MaxWidth.Large">
 
-            <MudText Class="section-caption">
-                OUR GROWING COMMUNITY
-            </MudText>
+            <!-- HEADER -->
+            <MudStack AlignItems="AlignItems.Center" Class="text-center stats-header">
 
-            <MudText Class="stats-title">
-                Numbers That Speak for Themselves
-            </MudText>
+                <MudText Class="section-caption">
+                    OUR GROWING COMMUNITY
+                </MudText>
 
-        </MudStack>
+                <MudText Class="stats-title">
+                    Numbers That Speak for Themselves
+                </MudText>
 
-        <!-- STATS -->
-        <MudGrid GutterSize="6">
+            </MudStack>
 
-            @foreach (var stat in Stats)
-            {
-                <MudItem xs="12" sm="6" md="3">
-                    <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="stat-item">
+            <!-- STATS -->
+            <MudGrid GutterSize="6">
 
-                        <div class="stat-icon">
-                            <MudIcon Icon="@stat.Icon" />
-                        </div>
+                @foreach (var stat in Stats)
+                {
+                    <MudItem xs="12" sm="6" md="3">
+                        <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="stat-item">
 
-                        <MudText Class="stat-number">
-                            @stat.DisplayValue.ToString("N0")+
-                        </MudText>
+                            <div class="stat-icon">
+                                <MudIcon Icon="@stat.Icon" />
+                            </div>
 
-                        <MudText Class="stat-label">
-                            @stat.Label
-                        </MudText>
+                            <MudText Class="stat-number">
+                                @stat.DisplayValue.ToString("N0")+
+                            </MudText>
 
-                    </MudStack>
-                </MudItem>
-            }
+                            <MudText Class="stat-label">
+                                @stat.Label
+                            </MudText>
 
-        </MudGrid>
+                        </MudStack>
+                    </MudItem>
+                }
 
-    </MudContainer>
+            </MudGrid>
 
-</section>
+        </MudContainer>
+
+    </section>
+}
 
 @code {
 
     [CascadingParameter] public bool IsVisible { get; set; }
-
+    [Parameter] public bool isShow { get; set; } = true;
     [Parameter] public int Mentors { get; set; }
     [Parameter] public int Members { get; set; }
     [Parameter] public int JobsPosted { get; set; }

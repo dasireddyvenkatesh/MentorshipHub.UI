@@ -1,24 +1,27 @@
 ﻿@using MudBlazor
 
-<section class="proof-section pt-4 pb-4">
+@if (isShow)
+{
 
-    <MudContainer MaxWidth="MaxWidth.Large">
+    <section class="proof-section pt-4 pb-4">
 
-        <!-- HEADER -->
-        <MudStack AlignItems="AlignItems.Center" Class="text-center proof-header">
+        <MudContainer MaxWidth="MaxWidth.Large">
 
-            <MudText Class="proof-title">
-                Built for Serious Career Growth
-            </MudText>
+            <!-- HEADER -->
+            <MudStack AlignItems="AlignItems.Center" Class="text-center proof-header">
 
-        </MudStack>
+                <MudText Class="proof-title">
+                    Built for Serious Career Growth
+                </MudText>
 
-        <!-- TOP FEATURE CARDS -->
-        <MudGrid GutterSize="4" Class="mb-8">
+            </MudStack>
 
-            <MudItem xs="12" sm="6" md="4">
-                @Feature(Icons.Material.Outlined.VerifiedUser,
-                                "Mentor-verified profiles")
+            <!-- TOP FEATURE CARDS -->
+            <MudGrid GutterSize="4" Class="mb-8">
+
+                <MudItem xs="12" sm="6" md="4">
+                    @Feature(Icons.Material.Outlined.VerifiedUser,
+                    "Mentor-verified profiles")
             </MudItem>
 
             <MudItem xs="12" sm="6" md="4">
@@ -45,8 +48,11 @@
     </MudContainer>
 
 </section>
+}
 
 @code {
+
+    [Parameter] public bool isShow { get; set; } = true;
 
     RenderFragment Feature(string icon, string text) => @<MudPaper Class="feature-card" Elevation="0">
 
