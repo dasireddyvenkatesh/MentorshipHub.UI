@@ -1,7 +1,9 @@
-﻿::deep .promo-bar {
-    position: sticky;
-    top: 0;
-    z-index: 999;
+﻿.promo-section {
+    padding-top: 10px;
+}
+
+::deep .promo-bar {
+    padding-top: var(--mud-appbar-height) !important;
     background: #da9b2f;
     padding: 8px 0;
 }
