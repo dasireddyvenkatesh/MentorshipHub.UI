@@ -1,0 +1,259 @@
+﻿@page "/login"
+@using MentorshipHub.UI.DTO
+@using MentorshipHub.UI.Infrastructure.Validation
+@using MentorshipHub.UI.Interface
+@using MentorshipHub.UI.Validators
+@using MudBlazor
+@using System.Timers
+
+@inject ISnackbar Snackbar
+@inject NavigationManager Nav
+@inject IAuthService AuthService
+
+<div class="login-section">
+    <MudCard Class="login-card">
+
+        <MudText Typo="Typo.h5" Class="login-title mb-2">
+            Welcome back
+        </MudText>
+
+        <MudText Class="login-subtitle mb-6">
+            Sign in to continue your mentorship journey
+        </MudText>
+
+        @if (!isMfaStep)
+        {
+            <!-- 🔐 LOGIN FORM -->
+            <MudForm @ref="form"
+                     Model="loginRequest"
+                     Validation="loginValidator.ToMudValidator()"
+                     OnValidSubmit="Submit">
+
+                <MudTextField Label="Email"
+                              @bind-Value="loginRequest.Email"
+                              For="@(() => loginRequest.Email)"
+                              Immediate="true" />
+
+                <MudTextField Label="Password"
+                              @bind-Value="loginRequest.Password"
+                              For="@(() => loginRequest.Password)"
+                              InputType="@(showPassword? InputType.Text: InputType.Password)"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@(showPassword? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                              OnAdornmentClick="TogglePassword" />
+
+                <MudButton FullWidth
+                           Variant="Variant.Filled"
+                           OnClick="Submit"
+                           Class="login-btn">
+                    Login
+                </MudButton>
+            </MudForm>
+
+            <MudDivider Class="my-4" />
+
+            <!-- 🌐 SOCIAL LOGIN -->
+            <MudButton Class="social-btn"
+                       StartIcon="@Icons.Custom.Brands.Google"
+                       FullWidth
+                       OnClick="LoginWithGoogle">
+                Login with Google
+            </MudButton>
+
+            <MudButton StartIcon="@Icons.Custom.Brands.Twitter"
+                       FullWidth
+                       Class="mt-2"
+                       OnClick="LoginWithTwitter">
+                Login with Twitter
+            </MudButton>
+
+            <MudButton StartIcon="@Icons.Custom.Brands.GitHub"
+                       FullWidth
+                       Class="mt-2"
+                       OnClick="LoginWithGitHub">
+                Login with GitHub
+            </MudButton>
+        }
+        else
+        {
+            <!-- 🔢 OTP FORM -->
+            <MudForm @ref="form"
+                     Model="otpRequest"
+                     Validation="otpValidator.ToMudValidator()"
+                     OnValidSubmit="Submit">
+
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Secondary"
+                           OnClick="BackToLogin">
+                    ← Back to login
+                </MudButton>
+
+                <MudTextField Label="Email"
+                              Value="loginRequest.Email"
+                              ReadOnly="true" />
+
+                <MudTextField Label="Enter OTP"
+                              @bind-Value="otpRequest.Otp"
+                              For="@(() => otpRequest.Otp)"
+                              MaxLength="6"
+                              Immediate="true"
+                              InputMode="InputMode.numeric" />
+
+                <MudButton Variant="Variant.Text"
+                           Disabled="@isResendDisabled"
+                           OnClick="ResendOtp">
+                    @if (isResendDisabled)
+                    {
+                        <span>Resend in @secondsRemaining s</span>
+                    }
+                    else
+                    {
+                        <span>Resend OTP</span>
+                    }
+                </MudButton>
+
+                <MudButton FullWidth
+                           Variant="Variant.Filled"
+                           OnClick="Submit"
+                           Class="login-btn">
+                    Verify OTP
+                </MudButton>
+            </MudForm>
+        }
+
+    </MudCard>
+</div>
+
+@code {
+
+    MudForm form = new();
+    LoginRequest loginRequest = new();
+    OtpRequest otpRequest = new();
+
+    LoginRequestValidator loginValidator = new();
+    OtpRequestValidator otpValidator = new();
+
+    bool isMfaStep = false;
+    bool showPassword;
+
+    bool isResendDisabled = true;
+    int secondsRemaining = 30;
+    Timer timer = new();
+
+    void TogglePassword() => showPassword = !showPassword;
+
+    async Task Submit()
+    {
+        await form.Validate();
+
+        if (!form.IsValid)
+            return;
+
+        if (!isMfaStep)
+        {
+            // 🔐 CALL LOGIN API
+            var response = await AuthService.LoginAsync(loginRequest);
+
+            if (!response.IsSuccess)
+            {
+                Snackbar.Add("Invalid credentials", Severity.Error);
+                return;
+            }
+
+            if (response.RequiresMfa)
+            {
+                otpRequest.Email = loginRequest.Email;
+                isMfaStep = true;
+                StartTimer();
+                Snackbar.Add("OTP sent to your email");
+                return;
+            }
+
+            // ✅ store token if returned
+            // await localStorage.SetItemAsync("token", response.Token);
+
+            Nav.NavigateTo("/dashboard");
+        }
+        else
+        {
+            var success = await AuthService.VerifyOtpAsync(otpRequest);
+
+            if (!success)
+            {
+                Snackbar.Add("Invalid OTP", Severity.Error);
+                return;
+            }
+
+            Snackbar.Add("Login successful", Severity.Success);
+            Nav.NavigateTo("/dashboard");
+        }
+    }
+
+    async Task ResendOtp()
+    {
+        await AuthService.ResendOtpAsync(loginRequest.Email);
+
+        Snackbar.Add("OTP resent", Severity.Success);
+        StartTimer();
+    }
+
+    void StartTimer()
+    {
+        isResendDisabled = true;
+        secondsRemaining = 30;
+
+        timer?.Dispose();
+
+        timer = new Timer(1000);
+        timer.Elapsed += OnTimerTick;
+        timer.Start();
+    }
+
+    void OnTimerTick(object? sender, ElapsedEventArgs e)
+    {
+        InvokeAsync(() =>
+        {
+            if (secondsRemaining > 0)
+                secondsRemaining--;
+            else
+            {
+                isResendDisabled = false;
+                timer.Stop();
+            }
+
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+
+    void BackToLogin()
+    {
+        isMfaStep = false;
+        otpRequest = new();
+    }
+    async Task LoginWithGoogle()
+    {
+        var response = await AuthService.LoginWithGoogle();
+
+        if (!response.IsSuccess)
+        {
+            Snackbar.Add("Invalid credentials", Severity.Error);
+            return;
+        }
+
+        if (response.RequiresMfa)
+        {
+            otpRequest.Email = loginRequest.Email;
+            isMfaStep = true;
+            StartTimer();
+            Snackbar.Add("OTP sent to your email");
+            return;
+        }
+    }
+    void LoginWithTwitter() => Nav.NavigateTo("api/auth/twitter", true);
+    void LoginWithGitHub() => Nav.NavigateTo("api/auth/github", true);
+}
