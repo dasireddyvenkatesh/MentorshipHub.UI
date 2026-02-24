@@ -22,7 +22,7 @@ builder.Services.AddHttpClient("ApiClient", client =>
 });
 
 builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
-
+builder.Services.AddSingleton<VisitCounterService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();

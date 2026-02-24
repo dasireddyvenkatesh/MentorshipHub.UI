@@ -6,7 +6,7 @@ namespace MentorshipHub.UI.Interface
     {
         Task<LoginResponse> LoginAsync(LoginRequest request);
         Task<bool> VerifyOtpAsync(OtpRequest request);
-        Task ResendOtpAsync(string email);
+        Task<bool> ResendOtpAsync(string email);
         Task<LoginResponse> LoginWithGoogle();
     }
 }

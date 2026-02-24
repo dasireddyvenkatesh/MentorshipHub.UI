@@ -14,18 +14,19 @@ namespace MentorshipHub.UI.Classes
 
         public async Task<LoginResponse> LoginAsync(LoginRequest request)
         {
-            var response = new LoginResponse
-            {
-                IsSuccess = true,
-                RequiresMfa = true,
-                Token = "",
-            };
-            return response; 
+            var response = await _http.PostAsJsonAsync("api/auth/login", request);
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<LoginResponse>();
         }
 
-        public async Task ResendOtpAsync(string email)
+        public async Task<bool> ResendOtpAsync(string email)
         {
-            //await _http.PostAsync($"api/auth/resend-otp?email={email}", null);
+            var response = await _http.PostAsync($"api/auth/resend-otp?email={email}", null);
+
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> VerifyOtpAsync(OtpRequest request)
