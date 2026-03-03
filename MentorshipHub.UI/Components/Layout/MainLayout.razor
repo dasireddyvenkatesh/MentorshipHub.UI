@@ -1,5 +1,7 @@
-﻿@using MudBlazor
+﻿@using MentorshipHub.UI.BusinessLayer.Interfaces.Auth
+@using MudBlazor
 @inherits LayoutComponentBase
+@inject IAuthService AuthService;
 
 <MudThemeProvider Theme="_customTheme" />
 <MudPopoverProvider />
@@ -28,4 +30,16 @@
             TextPrimary = "#0f2942",
         }
     };
+
+    private static bool _initialized;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _initialized)
+            return;
+
+        _initialized = true;
+
+        await AuthService.InitializeAsync();
+    }
 }

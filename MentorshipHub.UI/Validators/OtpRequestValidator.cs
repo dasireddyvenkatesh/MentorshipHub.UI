@@ -3,11 +3,11 @@ using MentorshipHub.UI.DTO;
 
 namespace MentorshipHub.UI.Validators
 {
-    public class OtpRequestValidator : AbstractValidator<OtpRequest>
+    public class OtpRequestValidator : AbstractValidator<VerifyOtpRequest>
     {
         public OtpRequestValidator()
         {
-            RuleFor(x => x.Otp)
+            RuleFor(x => x.OtpCode)
                 .NotEmpty()
                 .Length(6)
                 .Matches("^[0-9]*$")

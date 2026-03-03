@@ -1,4 +1,7 @@
-﻿@using MudBlazor
+﻿@using MentorshipHub.UI.BusinessLayer.Interfaces.Auth
+@using Microsoft.AspNetCore.Components.Authorization
+@using MudBlazor
+@inject IAuthService AuthService
 
 <MudAppBar Elevation="1" Color="Color.Surface" Fixed="true" Style="background: #ffffff; border-top: 4px solid #d4a017; padding: 0 24px;">
 
@@ -8,6 +11,8 @@
     </MudText>
 
     <MudSpacer />
+    <AuthorizeView>
+        <NotAuthorized>
 
     <!-- LOGIN -->
     <MudButton Href="/login" Variant="Variant.Text" Style="color: #132639; font-weight: 500; text-transform: none; margin-right: 10px;">
@@ -18,5 +23,22 @@
     <MudButton Href="/register" Variant="Variant.Filled" DisableElevation="true" Style="white-space: nowrap; background-color: #0f2942;color: #ffffff; text-transform: none; border-radius: 8px; padding: 8px 20px; font-weight: 600;">
         Sign Up
     </MudButton>
+        </NotAuthorized>
 
+        <Authorized>
+            <MudButton Href="/dashboard" Variant="Variant.Text" Style="color: #132639; font-weight: 500; text-transform: none; margin-right: 10px;">
+                Dashboard
+            </MudButton>
+            <MudButton Variant="Variant.Text" OnClick="Logout">
+                Logout
+            </MudButton>
+        </Authorized>
+        </AuthorizeView>
 </MudAppBar>
+
+@code {
+    private async Task Logout()
+    {
+        await AuthService.Logout();
+    }
+}
