@@ -103,6 +103,8 @@
     color: #94a3b8;
     font-weight: 600;
     white-space: nowrap;
+    text-align: center;
+    justify-self:center;
 }
 
 ::deep .divider-line-1 {
