@@ -1,134 +1,201 @@
 ﻿@page "/login"
+@using System.Timers
+@using MentorshipHub.UI.BusinessLayer.Interfaces
+@using MentorshipHub.UI.BusinessLayer.Interfaces.Auth
 @using MentorshipHub.UI.DTO
 @using MentorshipHub.UI.Infrastructure.Validation
-@using MentorshipHub.UI.Interface
 @using MentorshipHub.UI.Validators
 @using MudBlazor
-@using System.Timers
-
 @inject ISnackbar Snackbar
 @inject NavigationManager Nav
 @inject IAuthService AuthService
 
-<div class="login-section">
-    <MudCard Class="login-card">
+<section>
 
-        <MudText Typo="Typo.h5" Class="login-title mb-2">
-            Welcome back
-        </MudText>
+    <MudGrid Class="login-wrapper" GutterSize="0">
 
-        <MudText Class="login-subtitle mb-6">
-            Sign in to continue your mentorship journey
-        </MudText>
+        <!-- LEFT PANEL -->
+        <MudItem xs="12" md="6" Class="left-panel d-none d-md-flex">
+            <MudStack Class="left-content">
 
-        @if (!isMfaStep)
-        {
-            <!-- 🔐 LOGIN FORM -->
-            <MudForm @ref="form"
-                     Model="loginRequest"
-                     Validation="loginValidator.ToMudValidator()"
-                     OnValidSubmit="Submit">
+                <MudText Class="logo-text">
+                    X<span>QARE</span>
+                </MudText>
 
-                <MudTextField Label="Email"
-                              @bind-Value="loginRequest.Email"
-                              For="@(() => loginRequest.Email)"
-                              Immediate="true" />
+                <MudText Class="hero-title mt-8">
+                    Welcome back to your <span>career growth</span> journey
+                </MudText>
 
-                <MudTextField Label="Password"
-                              @bind-Value="loginRequest.Password"
-                              For="@(() => loginRequest.Password)"
-                              InputType="@(showPassword? InputType.Text: InputType.Password)"
-                              Adornment="Adornment.End"
-                              AdornmentIcon="@(showPassword? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
-                              OnAdornmentClick="TogglePassword" />
+                <MudText Class="hero-sub mt-4">
+                    Built for every stage of your career — from first step to leadership.
+                </MudText>
 
-                <MudButton FullWidth
-                           Variant="Variant.Filled"
-                           OnClick="Submit"
-                           Class="login-btn">
-                    Login
-                </MudButton>
-            </MudForm>
+                <MudStack Direction="Row" Spacing="8" Class="stats mt-10">
+                    <MudStack>
+                        <MudText Class="stat-number">5,000+</MudText>
+                        <MudText Class="stat-label">Members</MudText>
+                    </MudStack>
 
-            <MudDivider Class="my-4" />
+                    <MudStack>
+                        <MudText Class="stat-number">200+</MudText>
+                        <MudText Class="stat-label">Mentors</MudText>
+                    </MudStack>
 
-            <!-- 🌐 SOCIAL LOGIN -->
-            <MudButton Class="social-btn"
-                       StartIcon="@Icons.Custom.Brands.Google"
-                       FullWidth
-                       OnClick="LoginWithGoogle">
-                Login with Google
-            </MudButton>
+                    <MudStack>
+                        <MudText Class="stat-number">92%</MudText>
+                        <MudText Class="stat-label">Growth Rate</MudText>
+                    </MudStack>
+                </MudStack>
 
-            <MudButton StartIcon="@Icons.Custom.Brands.Twitter"
-                       FullWidth
-                       Class="mt-2"
-                       OnClick="LoginWithTwitter">
-                Login with Twitter
-            </MudButton>
+            </MudStack>
+        </MudItem>
 
-            <MudButton StartIcon="@Icons.Custom.Brands.GitHub"
-                       FullWidth
-                       Class="mt-2"
-                       OnClick="LoginWithGitHub">
-                Login with GitHub
-            </MudButton>
-        }
-        else
-        {
-            <!-- 🔢 OTP FORM -->
-            <MudForm @ref="form"
-                     Model="otpRequest"
-                     Validation="otpValidator.ToMudValidator()"
-                     OnValidSubmit="Submit">
+        <!-- RIGHT PANEL -->
+        <MudItem xs="12" md="6" Class="right-panel">
 
-                <MudButton Variant="Variant.Text"
-                           Color="Color.Secondary"
-                           OnClick="BackToLogin">
-                    ← Back to login
-                </MudButton>
+            <MudPaper Elevation="0" Class="auth-container">
 
-                <MudTextField Label="Email"
-                              Value="loginRequest.Email"
-                              ReadOnly="true" />
+                <MudText Class="auth-title">
+                    Sign in to your account
+                </MudText>
 
-                <MudTextField Label="Enter OTP"
-                              @bind-Value="otpRequest.Otp"
-                              For="@(() => otpRequest.Otp)"
-                              MaxLength="6"
-                              Immediate="true"
-                              InputMode="InputMode.numeric" />
+                <MudText Class="auth-subtitle">
+                    Don’t have an account?
+                    <span>Create one free</span>
+                </MudText>
 
-                <MudButton Variant="Variant.Text"
-                           Disabled="@isResendDisabled"
-                           OnClick="ResendOtp">
-                    @if (isResendDisabled)
-                    {
-                        <span>Resend in @secondsRemaining s</span>
-                    }
-                    else
-                    {
-                        <span>Resend OTP</span>
-                    }
-                </MudButton>
+                @if (!isMfaStep)
+                {
+                    <!-- SOCIAL 2x2 -->
+                    <MudGrid Class="social-grid mt-6">
+                        <MudItem xs="6">
+                            <MudButton FullWidth Class="social-btn"
+                                       StartIcon="@Icons.Custom.Brands.Google"
+                                       OnClick="LoginWithGoogle">
+                                Google
+                            </MudButton>
+                        </MudItem>
 
-                <MudButton FullWidth
-                           Variant="Variant.Filled"
-                           OnClick="Submit"
-                           Class="login-btn">
-                    Verify OTP
-                </MudButton>
-            </MudForm>
-        }
+                        <MudItem xs="6">
+                            <MudButton FullWidth Class="social-btn"
+                                       StartIcon="@Icons.Custom.Brands.GitHub"
+                                       OnClick="LoginWithGitHub">
+                                GitHub
+                            </MudButton>
+                        </MudItem>
 
-    </MudCard>
-</div>
+                        <MudItem xs="6">
+                            <MudButton FullWidth Class="social-btn"
+                                       StartIcon="@Icons.Custom.Brands.LinkedIn"
+                                       OnClick="LoginWithLinkedIn">
+                                LinkedIn
+                            </MudButton>
+                        </MudItem>
+
+                        <MudItem xs="6">
+                            <MudButton FullWidth Class="social-btn"
+                                       StartIcon="@Icons.Custom.Brands.Twitter"
+                                       OnClick="LoginWithTwitter">
+                                Twitter
+                            </MudButton>
+                        </MudItem>
+                    </MudGrid>
+
+                    <MudDivider Class="divider mt-6 mb-6">
+                        OR CONTINUE WITH EMAIL
+                    </MudDivider>
+
+                    <!-- LOGIN FORM -->
+                    <MudForm @ref="form"
+                             Model="loginRequest"
+                             Validation="loginValidator.ToMudValidator()"
+                             OnValidSubmit="Submit">
+
+                        <MudTextField Label="Email Address"
+                                      Variant="Variant.Outlined"
+                                      @bind-Value="loginRequest.Email"
+                                      For="@(() => loginRequest.Email)"
+                                      Immediate="true" />
+
+                        <MudTextField Label="Password"
+                                      Variant="Variant.Outlined"
+                                      @bind-Value="loginRequest.Password"
+                                      For="@(() => loginRequest.Password)"
+                                      InputType="@(showPassword? InputType.Text: InputType.Password)"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@(showPassword? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                                      OnAdornmentClick="TogglePassword" />
+
+                        <MudButton FullWidth
+                                   Variant="Variant.Filled"
+                                   OnClick="Submit"
+                                   Class="login-btn">
+                            Sign In →
+                        </MudButton>
+                    </MudForm>
+                }
+                else
+                {
+                    <!-- OTP FORM -->
+                    <MudForm @ref="form"
+                             Model="otpRequest"
+                             Validation="otpValidator.ToMudValidator()"
+                             OnValidSubmit="Submit"
+                             Class="mt-6">
+
+                        <MudButton Variant="Variant.Text"
+                                   OnClick="BackToLogin"
+                                   Class="back-btn">
+                            ← Back to login
+                        </MudButton>
+
+                        <MudTextField Label="Email"
+                                      Value="loginRequest.Email"
+                                      Variant="Variant.Outlined"
+                                      ReadOnly="true" />
+
+                        <MudTextField Label="Enter OTP"
+                                      Variant="Variant.Outlined"
+                                      @bind-Value="otpRequest.OtpCode"
+                                      For="@(() => otpRequest.OtpCode)"
+                                      MaxLength="6"
+                                      Immediate="true"
+                                      InputMode="InputMode.numeric" />
+
+                        <MudButton Variant="Variant.Text"
+                                   Disabled="@isResendDisabled"
+                                   OnClick="ResendOtp"
+                                   Class="resend-btn">
+                            @if (isResendDisabled)
+                            {
+                                <span>Resend in @secondsRemaining s</span>
+                            }
+                            else
+                            {
+                                <span>Resend OTP</span>
+                            }
+                        </MudButton>
+
+                        <MudButton FullWidth
+                                   Variant="Variant.Filled"
+                                   OnClick="Submit"
+                                   Class="login-btn">
+                            Verify OTP →
+                        </MudButton>
+
+                    </MudForm>
+                }
+
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</section>
 
 @code {
 
     MudForm form = new();
     LoginRequest loginRequest = new();
-    OtpRequest otpRequest = new();
+    VerifyOtpRequest otpRequest = new();
 
     LoginRequestValidator loginValidator = new();
     OtpRequestValidator otpValidator = new();
@@ -265,4 +332,5 @@
     }
     void LoginWithTwitter() => Nav.NavigateTo("api/auth/twitter", true);
     void LoginWithGitHub() => Nav.NavigateTo("api/auth/github", true);
+    void LoginWithLinkedIn() => Nav.NavigateTo("api/auth/github", true);
 }
