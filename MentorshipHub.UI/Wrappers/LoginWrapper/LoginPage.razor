@@ -54,7 +54,9 @@
         <MudItem xs="12" md="6" Class="right-panel">
 
             <MudPaper Elevation="0" Class="auth-container">
-
+                <MudText Class="mobile-logo d-block d-md-none">
+                    X<span>QARE</span>
+                </MudText>
                 <MudText Class="auth-title">
                     Sign in to your account
                 </MudText>
@@ -101,9 +103,23 @@
                         </MudItem>
                     </MudGrid>
 
-                    <MudDivider Class="divider mt-6 mb-6">
-                        OR CONTINUE WITH EMAIL
-                    </MudDivider>
+                    <MudGrid Class="mt-6 mb-6 align-center">
+
+                        <MudItem xs="5">
+                            <MudDivider Class="divider-line-1" />
+                        </MudItem>
+
+                        <MudItem xs="2" Style="justify-items:center">
+                            <MudText Class="divider-text">
+                                OR CONTINUE WITH EMAIL
+                            </MudText>
+                        </MudItem>
+
+                        <MudItem xs="5">
+                            <MudDivider Class="divider-line-2" />
+                        </MudItem>
+
+                    </MudGrid>
 
                     <!-- LOGIN FORM -->
                     <MudForm @ref="form"
@@ -132,6 +148,9 @@
                                    Class="login-btn">
                             Sign In →
                         </MudButton>
+                        <MudText Class="security-text">
+                            🔒 Your data is protected with enterprise-grade encryption
+                        </MudText>
                     </MudForm>
                 }
                 else
