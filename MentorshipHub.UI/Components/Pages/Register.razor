@@ -1,5 +1,13 @@
 ﻿@page "/register"
+@using System.Timers
+@using MentorshipHub.UI.BusinessLayer.Interfaces.Auth
+@using MentorshipHub.UI.DTO
+@using MentorshipHub.UI.Infrastructure.Validation
+@using MentorshipHub.UI.Validators
 @using MudBlazor
+@inject ISnackbar Snackbar
+@inject NavigationManager Nav
+@inject IAuthService AuthService
 
 <section>
 
@@ -74,7 +82,9 @@
                 <MudGrid Class="social-grid mt-6">
                     <MudItem xs="6">
                         <MudButton FullWidth Class="social-btn"
-                                   StartIcon="@Icons.Custom.Brands.Google">
+                                   StartIcon="@Icons.Custom.Brands.Google"
+                                   OnClick="RegisterWithGoogle">
+                                   
                             Google
                         </MudButton>
                     </MudItem>
@@ -117,24 +127,49 @@
                 </MudGrid>
 
                 <!-- FORM -->
-                <MudForm>
+                <MudForm @ref="form"
+                         Model="registerRequest"
+                         Validation="validationRules.ToMudValidator()"
+                         OnValidSubmit="Submit">
 
                     <MudTextField Label="Full Name"
-                                  @bind-Value="_string"
-                                  Variant="Variant.Outlined" />
+                                  Variant="Variant.Outlined"
+                                  @bind-Value="registerRequest.FullName"
+                                  For="@(() => registerRequest.FullName)"
+                                  HelperText="Please enter your legal name"
+                                  HelperTextOnFocus="true"
+                                  Immediate="true"/>
 
                     <MudTextField Label="Email Address"
-                                  @bind-Value="_string"
-                                  Variant="Variant.Outlined" />
+                                  InputType="InputType.Email"
+                                  Variant="Variant.Outlined" 
+                                  @bind-Value="registerRequest.Email"
+                                  For="@(() => registerRequest.Email)"
+                                  HelperText="Please enter your personal email id"
+                                  HelperTextOnFocus="true"/>
 
                     <MudTextField Label="Password"
-                                  @bind-Value="_string"
                                   Variant="Variant.Outlined"
-                                  InputType="InputType.Password" />
+                                  InputType="@(showPassword? InputType.Text: InputType.Password)"
+                                  @bind-Value="registerRequest.Password"
+                                  For="@(() => registerRequest.Password)"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@(showPassword? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                                  OnAdornmentClick="TogglePassword" />
+
+                    <MudTextField Label="Confirm Password"
+                                  Variant="Variant.Outlined"
+                                  InputType="@(showConfirmPassword? InputType.Text: InputType.Password)"
+                                  @bind-Value="registerRequest.ConfirmPassword"
+                                  For="@(() => registerRequest.ConfirmPassword)"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@(showConfirmPassword? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                                  OnAdornmentClick="ToggleConfirmPassword" />
 
                     <MudButton FullWidth
                                Variant="Variant.Filled"
-                               Class="login-btn">
+                               OnClick="Submit"
+                               Class="register-btn">                            
                         🚀 Start Free Trial →
                     </MudButton>
 
@@ -163,5 +198,79 @@
     [Parameter] public bool ShowTrialPrice { get; set; } = true;
     [Parameter] public bool ShowNoCardNote { get; set; } = true;
 
-    public string _string;
+    MudForm form = new();
+    RegisterRequest registerRequest = new();
+    VerifyOtpRequest otpRequest = new();
+
+    RegisterRequestValidator validationRules = new();
+    OtpRequestValidator otpValidator = new();
+
+    bool isMfaStep = false;
+    bool showPassword;
+    bool showConfirmPassword;
+    bool isResendDisabled = true;
+    int secondsRemaining = 30;
+    Timer timer = new();
+
+    void TogglePassword() => showPassword = !showPassword;
+    void ToggleConfirmPassword() => showConfirmPassword = !showConfirmPassword;
+
+    async Task Submit()
+    {
+        await form.Validate();
+
+        if (!form.IsValid)
+            return;
+    }
+
+    void StartTimer()
+    {
+        isResendDisabled = true;
+        secondsRemaining = 30;
+
+        timer?.Dispose();
+
+        timer = new Timer(1000);
+        timer.Elapsed += OnTimerTick;
+        timer.Start();
+    }
+
+    void OnTimerTick(object? sender, ElapsedEventArgs e)
+    {
+        InvokeAsync(() =>
+        {
+            if (secondsRemaining > 0)
+                secondsRemaining--;
+            else
+            {
+                isResendDisabled = false;
+                timer.Stop();
+            }
+
+            StateHasChanged();
+        });
+    }
+
+    async Task RegisterWithGoogle()
+    {
+        var response = await AuthService.LoginWithGoogle();
+
+        if (!response.IsSuccess)
+        {
+            Snackbar.Add("Invalid credentials", Severity.Error);
+            return;
+        }
+
+        if (response.RequiresMfa)
+        {
+            otpRequest.Email = registerRequest.Email;
+            isMfaStep = true;
+            StartTimer();
+            Snackbar.Add("OTP sent to your email");
+            return;
+        }
+    }
+    void LoginWithTwitter() => Nav.NavigateTo("api/auth/twitter", true);
+    void LoginWithGitHub() => Nav.NavigateTo("api/auth/github", true);
+    void LoginWithLinkedIn() => Nav.NavigateTo("api/auth/github", true);
 }

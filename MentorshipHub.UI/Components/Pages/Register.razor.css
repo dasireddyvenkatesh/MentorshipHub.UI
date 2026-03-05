@@ -127,7 +127,7 @@
     border-color: #f59e0b !important;
 }
 
-::deep .login-btn {
+::deep .register-btn {
     margin-top: 20px;
     height: 48px;
     border-radius: 10px;
@@ -137,7 +137,7 @@
     text-transform: none;
 }
 
-    ::deep .login-btn:hover {
+    ::deep .register-btn:hover {
         background: #d97706;
     }
 
