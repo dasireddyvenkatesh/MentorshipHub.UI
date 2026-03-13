@@ -58,13 +58,18 @@ app.UseHttpsRedirection();
 
 app.Use(async (context, next) =>
 {
-    context.Response.Headers.Remove("X-Frame-Options");
-    context.Response.Headers.Remove("Content-Security-Policy");
+    context.Response.OnStarting(() =>
+    {
+        context.Response.Headers.Remove("X-Frame-Options");
+        context.Response.Headers.Remove("Content-Security-Policy");
 
-    context.Response.Headers.Append(
-        "Content-Security-Policy",
-        "frame-ancestors 'self':"
-    );
+        context.Response.Headers.Append(
+            "Content-Security-Policy",
+            "frame-ancestors 'self' https://www.w3schools.com"
+        );
+
+        return Task.CompletedTask;
+    });
 
     await next();
 });
