@@ -46,6 +46,12 @@ builder.Services.AddCascadingAuthenticationState();
 
 var app = builder.Build();
 
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Remove("X-Frame-Options");
+    await next();
+});
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
