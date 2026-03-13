@@ -58,16 +58,8 @@ app.UseHttpsRedirection();
 
 app.Use(async (context, next) =>
 {
-    context.Response.OnStarting(() =>
-    {
-        context.Response.Headers["Content-Security-Policy"] =
-            "frame-ancestors 'self' https://www.w3schools.com";
-
-        context.Response.Headers["X-Content-Type-Options"] = "nosniff";
-        context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
-
-        return Task.CompletedTask;
-    });
+    context.Response.Headers["Content-Security-Policy"] =
+        "frame-ancestors 'self' https://www.w3schools.com";
 
     await next();
 });
