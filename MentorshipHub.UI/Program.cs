@@ -63,7 +63,7 @@ app.Use(async (context, next) =>
 
     context.Response.Headers.Append(
         "Content-Security-Policy",
-        "frame-ancestors *"
+        "frame-ancestors 'self':"
     );
 
     await next();
