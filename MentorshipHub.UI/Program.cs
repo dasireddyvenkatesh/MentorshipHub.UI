@@ -46,18 +46,6 @@ builder.Services.AddCascadingAuthenticationState();
 
 var app = builder.Build();
 
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Remove("X-Frame-Options");
-
-    context.Response.Headers.Append(
-        "Content-Security-Policy",
-        "frame-ancestors *"
-    );
-
-    await next();
-});
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -67,6 +55,20 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Remove("X-Frame-Options");
+    context.Response.Headers.Remove("Content-Security-Policy");
+
+    context.Response.Headers.Append(
+        "Content-Security-Policy",
+        "frame-ancestors *"
+    );
+
+    await next();
+});
+
 app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
