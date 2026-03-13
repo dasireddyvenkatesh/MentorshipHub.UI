@@ -49,6 +49,12 @@ var app = builder.Build();
 app.Use(async (context, next) =>
 {
     context.Response.Headers.Remove("X-Frame-Options");
+
+    context.Response.Headers.Append(
+        "Content-Security-Policy",
+        "frame-ancestors *"
+    );
+
     await next();
 });
 
