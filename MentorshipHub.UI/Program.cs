@@ -61,7 +61,7 @@ app.Use(async (context, next) =>
     context.Response.OnStarting(() =>
     {
         context.Response.Headers["Content-Security-Policy"] =
-            "frame-ancestors 'self' https://www.w3schools.com";
+            "frame-ancestors 'self' https://ambitious-field-0719fd000.2.azurestaticapps.net";
 
         return Task.CompletedTask;
     });
