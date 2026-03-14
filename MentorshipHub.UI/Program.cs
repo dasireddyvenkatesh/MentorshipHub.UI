@@ -61,7 +61,7 @@ app.Use(async (context, next) =>
     context.Response.OnStarting(() =>
     {
         context.Response.Headers["Content-Security-Policy"] =
-            "frame-ancestors 'self' https://xqare.in";
+            "frame-ancestors 'self' https://www.xqare.in";
 
         return Task.CompletedTask;
     });
