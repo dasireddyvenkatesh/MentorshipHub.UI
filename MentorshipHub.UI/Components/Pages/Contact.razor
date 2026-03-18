@@ -47,8 +47,13 @@
                         Contact us and our team will respond shortly.
                     </MudText>
 
-                    <MudButton Variant="Variant.Outlined" Color="Color.Warning">
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Warning"
+                               StartIcon="@Icons.Material.Filled.Email"
+                               Href="mailto:support@xqare.in?subject=General Inquiry">
+
                         Send Message
+
                     </MudButton>
 
                 </MudPaper>
@@ -95,7 +100,7 @@
                         and guide the next generation of talent.
                     </MudText>
 
-                    <MudButton Variant="Variant.Outlined" Color="Color.Warning">
+                    <MudButton Href="/Register" Variant="Variant.Outlined" Color="Color.Warning">
                         Apply as Mentor
                     </MudButton>
 
@@ -244,7 +249,7 @@
         if (response.Success)
         {
             Snackbar.Add("Your message has been sent successfully. We will get back to you shortly", Severity.Success);
-            
+
         }
         else
         {
@@ -252,6 +257,6 @@
         }
 
         await form.ResetAsync();
-       
+
     }
 }
