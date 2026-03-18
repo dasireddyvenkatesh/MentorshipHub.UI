@@ -157,13 +157,26 @@
                                   For="@(() => contactUs.Message)"
                                   Placeholder="Tell us more..." />
 
-                    <MudButton Variant="Variant.Filled"
+                    <MudButton Disabled="@_processing"
+                               Variant="Variant.Filled"
                                Color="Color.Warning"
                                OnClick="Submit"
-                               StartIcon="@Icons.Material.Filled.Send"
+                               StartIcon="@(!_processing ? Icons.Material.Filled.Send : null)"
                                Size="Size.Large">
 
-                        Send Message
+                        <MudStack Direction="Row" AlignItems="AlignItems.Center" Spacing="1">
+
+                            @if (_processing)
+                            {
+                                <MudProgressCircular Size="Size.Small" Indeterminate="true" />
+                                <MudText>Processing...</MudText>
+                            }
+                            else
+                            {
+                                <MudText>Send Message</MudText>
+                            }
+
+                        </MudStack>
 
                     </MudButton>
 
@@ -237,16 +250,18 @@
     ContactUsRequest contactUs = new();
     ContactusValidator contactusValidator = new();
 
+    private bool _processing = false;
+
     async Task Submit()
     {
         await form.Validate();
 
         if (!form.IsValid)
             return;
-
+        _processing = true;
         var response = await ContactUsService.SendContactUsMessageAsync(contactUs);
 
-        if (response.Success)
+        if (response.IsSuccess)
         {
             Snackbar.Add(response.Message, Severity.Success);
 
@@ -257,6 +272,6 @@
         }
 
         await form.ResetAsync();
-
+        _processing = false;
     }
 }

@@ -93,13 +93,13 @@ namespace MentorshipHub.UI.BusinessLayer.Classes.APICalls
                     response = await httpCall();
                 }
 
-                var json = await response.Content.ReadAsStringAsync();
+                string json = await response.Content.ReadAsStringAsync();
 
                 var result = new ApiResponse<T>
                 {
                     StatusCode = response.StatusCode,
                     RawJson = json,
-                    IsSuccess = response.IsSuccessStatusCode
+                    IsSuccess = response.IsSuccessStatusCode,
                 };
 
                 if (!response.IsSuccessStatusCode)
@@ -112,7 +112,7 @@ namespace MentorshipHub.UI.BusinessLayer.Classes.APICalls
                 {
                     result.Data = JsonSerializer.Deserialize<T>(
                         json,
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? default!;
                 }
 
                 return result;
