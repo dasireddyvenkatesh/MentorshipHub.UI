@@ -23,7 +23,7 @@ var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"];
 
 builder.Services.AddHttpClient<IApiClient, ApiClient>(client =>
 {
-    client.BaseAddress = new Uri(apiBaseUrl);
+    client.BaseAddress = new Uri(apiBaseUrl!);
     client.Timeout = TimeSpan.FromMinutes(1);
 
 }).ConfigurePrimaryHttpMessageHandler(() =>
@@ -32,7 +32,7 @@ builder.Services.AddHttpClient<IApiClient, ApiClient>(client =>
         UseCookies = true
     });
 
-builder.Services.AddSingleton<ITokenService, TokenService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
 builder.Services.AddSingleton<VisitCounterService>();
