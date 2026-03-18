@@ -8,10 +8,10 @@ namespace MentorshipHub.UI.DTO
 
         public HttpStatusCode StatusCode { get; set; }
 
-        public string? RawJson { get; set; }
+        public string RawJson { get; set; } = default!;
 
         public string? ErrorMessage { get; set; }
 
-        public T? Data { get; set; }
+        public T Data { get; set; } = default!;
     }
 }
