@@ -248,12 +248,12 @@
 
         if (response.Success)
         {
-            Snackbar.Add("Your message has been sent successfully. We will get back to you shortly", Severity.Success);
+            Snackbar.Add(response.Message, Severity.Success);
 
         }
         else
         {
-            Snackbar.Add("Can you please try again after sometime", Severity.Error);
+            Snackbar.Add(response.Message, Severity.Error);
         }
 
         await form.ResetAsync();
