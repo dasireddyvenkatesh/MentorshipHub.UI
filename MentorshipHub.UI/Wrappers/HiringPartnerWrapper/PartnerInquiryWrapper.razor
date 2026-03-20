@@ -65,6 +65,11 @@
                         <MudTextField Label="Phone Number"
                                       Variant="Variant.Outlined"
                                       Disabled="_processing"
+                                      InputType="InputType.Telephone"
+                                      Adornment="Adornment.Start"
+                                      AdornmentText="+91"
+                                      Pattern="[0-9]*"
+                                      MaxLength="10"
                                       @bind-Value="_model.Phone"
                                       For="@(() => _model.Phone)" />
                     </MudItem>

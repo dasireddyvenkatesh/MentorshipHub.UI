@@ -30,8 +30,3 @@
     margin-top: 10px;
     color: #444;
 }
-
-::deep .legal-footer {
-    padding: 40px;
-    color: #777;
-}

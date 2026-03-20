@@ -14,6 +14,11 @@ namespace MentorshipHub.UI.Validators
             RuleFor(x => x.ContactPerson)
                 .NotEmpty();
 
+            RuleFor(x => x.Phone)
+                .Matches(@"^[6-9]\d{9}$")
+                .When(x => !string.IsNullOrWhiteSpace(x.Phone))
+                .WithMessage("Enter a valid 10-digit mobile number");
+
             RuleFor(x => x.Email)
                 .NotEmpty()
                 .EmailAddress();
