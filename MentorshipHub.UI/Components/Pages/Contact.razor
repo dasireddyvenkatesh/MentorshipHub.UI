@@ -126,35 +126,35 @@
                     Send Us a Message
                 </MudText>
 
-                <MudForm @ref="form"
-                         Model="contactUs"
+                <MudForm @ref="_form"
+                         Model="_model"
                          Validation="contactusValidator.ToMudValidator()"
                          OnValidSubmit="Submit" Spacing="3">
 
                     <MudTextField Label="Full Name"
                                   Variant="Variant.Outlined"
-                                  @bind-Value="contactUs.FullName"
-                                  For="@(() => contactUs.FullName)"
+                                  @bind-Value="_model.FullName"
+                                  For="@(() => _model.FullName)"
                                   Placeholder="Your full name"
                                   Immediate=" true" />
 
                     <MudTextField Label="Email Address"
                                   Variant="Variant.Outlined"
-                                  @bind-Value="contactUs.Email"
-                                  For="@(() => contactUs.Email)"
+                                  @bind-Value="_model.Email"
+                                  For="@(() => _model.Email)"
                                   Placeholder="you@example.com" />
 
                     <MudTextField Label="Subject"
                                   Variant="Variant.Outlined"
-                                  @bind-Value="contactUs.Subject"
-                                  For="@(() => contactUs.Subject)"
+                                  @bind-Value="_model.Subject"
+                                  For="@(() => _model.Subject)"
                                   Placeholder="What's this about?" />
 
                     <MudTextField Label="Message"
                                   Variant="Variant.Outlined"
                                   Lines="5"
-                                  @bind-Value="@contactUs.Message"
-                                  For="@(() => contactUs.Message)"
+                                  @bind-Value="_model.Message"
+                                  For="@(() => _model.Message)"
                                   Placeholder="Tell us more..." />
 
                     <MudButton Disabled="@_processing"
@@ -246,32 +246,45 @@
 
 @code {
 
-    MudForm form = new();
-    ContactUsRequest contactUs = new();
+    MudForm _form = new();
+    ContactUsRequest _model = new();
     ContactusValidator contactusValidator = new();
 
     private bool _processing = false;
 
     async Task Submit()
     {
-        await form.Validate();
+        await _form.Validate();
 
-        if (!form.IsValid)
+        if (!_form.IsValid)
             return;
+
         _processing = true;
-        var response = await ContactUsService.SendContactUsMessageAsync(contactUs);
 
-        if (response.IsSuccess)
+        try
         {
-            Snackbar.Add(response.Message, Severity.Success);
+            var response = await ContactUsService.SendContactUsMessageAsync(_model);
 
+            if (response.IsSuccess)
+            {
+                Snackbar.Add(response.Message, Severity.Success);
+                _model = new();
+
+                await _form.ResetAsync();
+            }
+            else
+            {
+                Snackbar.Add(response.Message, Severity.Error);
+            }
         }
-        else
+        catch
         {
-            Snackbar.Add(response.Message, Severity.Error);
+            Snackbar.Add("Something went wrong. Please try again.", Severity.Error);
         }
-
-        await form.ResetAsync();
-        _processing = false;
+        finally
+        {
+            _processing = false;
+        }
+        
     }
 }
