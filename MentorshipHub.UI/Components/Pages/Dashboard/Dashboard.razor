@@ -1,0 +1,26 @@
+﻿@page "/dashboard"
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Primary" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" Target="_blank" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_open" Elevation="1">
+@*         <SidebarWrapper DrawerOpen="_open" ToggleDrawer="ToggleDrawer" /> *@
+    </MudDrawer>
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6">
+            <MudAlert Severity="Severity.Success" Class="mt-16">Text inside MudContainer</MudAlert>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _open = true;
+
+    private void ToggleDrawer()
+    {
+        _open = !_open;
+    }
+}
