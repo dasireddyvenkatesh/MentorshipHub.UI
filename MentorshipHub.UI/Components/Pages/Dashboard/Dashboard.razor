@@ -1,26 +1,40 @@
 ﻿@page "/dashboard"
+@using MentorshipHub.UI.Wrappers.DashboardWrapper
 
-<MudLayout>
-    <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Primary" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-        <MudSpacer />
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" Target="_blank" />
-    </MudAppBar>
-    <MudDrawer @bind-Open="@_open" Elevation="1">
-@*         <SidebarWrapper DrawerOpen="_open" ToggleDrawer="ToggleDrawer" /> *@
-    </MudDrawer>
-    <MudMainContent Class="pt-16 px-16">
-        <MudContainer Class="mt-6">
-            <MudAlert Severity="Severity.Success" Class="mt-16">Text inside MudContainer</MudAlert>
+<MudBreakpointProvider OnBreakpointChanged="OnBreakpointChanged">
+
+    <section class="layout">
+
+        <SidebarWrapper _sidebarOpen="@_sidebar" />
+
+        <MudContainer class="main">
+
+            <TopbarWrapper />
+            <WelcomeWrapper></WelcomeWrapper>
+            <QuickActionsWrapper></QuickActionsWrapper>
+            <ProgressWrapper></ProgressWrapper>
+            <InsightsWrapper></InsightsWrapper>
+            <LaunchWrapper></LaunchWrapper>
+
         </MudContainer>
-    </MudMainContent>
-</MudLayout>
+
+    </section>
+</MudBreakpointProvider>
 
 @code {
-    private bool _open = true;
+    private bool _sidebar;
 
-    private void ToggleDrawer()
+    void OnBreakpointChanged(Breakpoint breakpoint)
     {
-        _open = !_open;
+        if (breakpoint < Breakpoint.Md)
+        {
+            _sidebar = false;
+        }
+        else
+        {
+            _sidebar = true;
+        }
+
+        StateHasChanged();
     }
 }
