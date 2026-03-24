@@ -230,7 +230,7 @@
 
     async Task Submit()
     {
-        await form.Validate();
+        await form.ValidateAsync();
 
         if (!form.IsValid)
             return;
@@ -254,9 +254,6 @@
                 Snackbar.Add("OTP sent to your email");
                 return;
             }
-
-            // ✅ store token if returned
-            // await localStorage.SetItemAsync("token", response.Token);
 
             Nav.NavigateTo("/dashboard");
         }
