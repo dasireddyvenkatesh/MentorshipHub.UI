@@ -109,7 +109,7 @@ namespace MentorshipHub.UI.BusinessLayer.Classes.Auth
 
             string url = $"{_configuration["ApiSettings:BaseUrl"]}/api/auth/google-login?deviceId={deviceId}&deviceName={deviceName}";
 
-            _nav.NavigateTo(url);
+            _nav.NavigateTo(url, true);
         }
 
         public async Task<(bool success, bool requiresMfa)> HandleExternalLoginCallbackAsync(string url)
