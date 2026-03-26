@@ -8,7 +8,10 @@
 
         <MudContainer class="main">
 
-            <TopbarWrapper />
+            @if (IsShow)
+            {
+                <TopbarWrapper />
+            }
             <WelcomeWrapper></WelcomeWrapper>
             <QuickActionsWrapper></QuickActionsWrapper>
             <ProgressWrapper></ProgressWrapper>
@@ -36,4 +39,6 @@
 
         StateHasChanged();
     }
+
+    public bool IsShow = false;
 }
