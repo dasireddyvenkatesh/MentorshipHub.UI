@@ -59,7 +59,7 @@
     [Parameter] public string RegisterUrl { get; set; } = "#";
 
     private string TimeLeft = "";
-    private bool IsExpired;
+    [Parameter] public bool IsExpired { get; set; }
 
     private System.Threading.Timer? _timer;
 

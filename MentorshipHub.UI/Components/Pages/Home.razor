@@ -8,10 +8,10 @@
 }
 
 <AuthWrapper />
-<PromoBarWrapper OfferEndsAt="@offerEnd"
+<PromoBarWrapper IsExpired="true" OfferEndsAt="@offerEnd"
                  SlotsLeft="50"
                  RegisterUrl="/register" />
-<HeroContentWrapper ShowPromoChip="true" />
+<HeroContentWrapper ShowPromoChip="false" />
 <WhySection />
 <CareerGrowthPlatformWrapper />
 
@@ -20,24 +20,24 @@
 
 <HowItWorksWrapper />
 
-<LimitedOfferWrapper TargetDate="@DateTime.Now.AddDays(7)" />
+<LimitedOfferWrapper isShow="false" TargetDate="@DateTime.Now.AddDays(7)" />
 
-<CareerGrowthProofWrapper />
+<CareerGrowthProofWrapper isShow="false" />
 
 
 <AnimateOnVisible>
 
-    <CommunityStatsWrapper Mentors="500"
+    <CommunityStatsWrapper isShow="false" Mentors="500"
                            Members="10000"
                            JobsPosted="1000"
                            SuccessStories="250" />
 
 </AnimateOnVisible>
 
-<MentorsWrapper />
+<MentorsWrapper isShow="false" />
 
 <FAQWrapper />
-<FooterWrapper/>
+<Footer_Site/>
 
 
 
