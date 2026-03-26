@@ -40,9 +40,7 @@ namespace MentorshipHub.UI.BusinessLayer.Classes.APICalls
 
         private async Task<bool> TryRefreshTokenAsync()
         {
-            if (_isRefreshing)
-                return false;
-
+            if (_isRefreshing) return false;
             _isRefreshing = true;
 
             try
@@ -52,11 +50,19 @@ namespace MentorshipHub.UI.BusinessLayer.Classes.APICalls
                 if (!response.IsSuccessStatusCode)
                     return false;
 
-                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                var result = await response.Content
+                    .ReadFromJsonAsync<LoginResponse>(
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                await _tokenService.SetTokensAsync(result.AccessToken);
+                if (result?.AccessToken == null) return false;
+
+                await _tokenService.SetTokenAsync(result.AccessToken);
 
                 return true;
+            }
+            catch
+            {
+                return false;
             }
             finally
             {
@@ -75,12 +81,12 @@ namespace MentorshipHub.UI.BusinessLayer.Classes.APICalls
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
+
                     var refreshed = await TryRefreshTokenAsync();
 
                     if (!refreshed)
                     {
                         await _tokenService.ClearAsync();
-
                         return new ApiResponse<T>
                         {
                             IsSuccess = false,

@@ -30,7 +30,7 @@
                     Built for every stage of your career — from first step to leadership.
                 </MudText>
 
-                <MudStack Direction="Row" Spacing="8" Class="stats mt-10">
+@*                 <MudStack Direction="Row" Spacing="8" Class="stats mt-10">
                     <MudStack>
                         <MudText Class="stat-number">5,000+</MudText>
                         <MudText Class="stat-label">Members</MudText>
@@ -45,7 +45,7 @@
                         <MudText Class="stat-number">92%</MudText>
                         <MudText Class="stat-label">Growth Rate</MudText>
                     </MudStack>
-                </MudStack>
+                </MudStack> *@
 
             </MudStack>
         </MudItem>
@@ -329,24 +329,34 @@
     }
     async Task LoginWithGoogle()
     {
-        var response = await AuthService.LoginWithGoogle();
+        await AuthService.LoginWithGoogle();
 
-        if (!response.IsSuccess)
-        {
-            Snackbar.Add("Invalid credentials", Severity.Error);
-            return;
-        }
-
-        if (response.RequiresMfa)
-        {
-            otpRequest.Email = loginRequest.Email;
-            isMfaStep = true;
-            StartTimer();
-            Snackbar.Add("OTP sent to your email");
-            return;
-        }
     }
     void LoginWithTwitter() => Nav.NavigateTo("api/auth/twitter", true);
     void LoginWithGitHub() => Nav.NavigateTo("api/auth/github", true);
     void LoginWithLinkedIn() => Nav.NavigateTo("api/auth/github", true);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = Nav.ToAbsoluteUri(Nav.Uri);
+
+        if (!uri.Query.Contains("data"))
+            return;
+
+        var (success, requiresMfa) =
+            await AuthService.HandleExternalLoginCallbackAsync(Nav.Uri);
+
+        if (!success)
+            return;
+
+        if (requiresMfa)
+        {
+            isMfaStep = true;
+            Snackbar.Add("OTP sent to your email");
+            StartTimer();
+            return;
+        }
+
+        // Nav.NavigateTo("/dashboard");
+    }
 }

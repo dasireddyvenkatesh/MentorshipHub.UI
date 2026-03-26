@@ -11,6 +11,7 @@ using MentorshipHub.UI.BusinessLayer.Interfaces.ContactUs;
 using MentorshipHub.UI.BusinessLayer.Interfaces.PartnerShip;
 using MentorshipHub.UI.Components;
 using MentorshipHub.UI.Validators;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
 
@@ -28,7 +29,6 @@ var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"];
 builder.Services.AddHttpClient<IApiClient, ApiClient>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl!);
-    client.Timeout = TimeSpan.FromMinutes(1);
 
 }).ConfigurePrimaryHttpMessageHandler(() =>
     new HttpClientHandler
@@ -43,8 +43,11 @@ builder.Services.AddSingleton<VisitCounterService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IContactUsService, ContactUsService>();
 builder.Services.AddScoped<IPartnershipService, PartnershipService>();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
 
-builder.Services.AddAuthorizationCore();
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
 builder.Services.AddScoped<JwtAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
     sp.GetRequiredService<JwtAuthStateProvider>());
@@ -61,7 +64,8 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.Use(async (context, next) =>
 {
     context.Response.OnStarting(() =>

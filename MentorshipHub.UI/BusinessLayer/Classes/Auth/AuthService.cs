@@ -4,6 +4,8 @@ using MentorshipHub.UI.BusinessLayer.Interfaces.Common;
 using MentorshipHub.UI.DTO;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text.Json;
 
 namespace MentorshipHub.UI.BusinessLayer.Classes.Auth
 {
@@ -14,14 +16,18 @@ namespace MentorshipHub.UI.BusinessLayer.Classes.Auth
         private readonly ITokenService _tokenService;
         private readonly NavigationManager _nav;
         private readonly AuthenticationStateProvider _authStateProvider;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(IDeviceService device, IApiClient api, ITokenService tokenService, NavigationManager nav, AuthenticationStateProvider authStateProvider)
+        public AuthService(IDeviceService device, IApiClient api, ITokenService tokenService, 
+                            NavigationManager nav, AuthenticationStateProvider authStateProvider, 
+                            IConfiguration configuration)
         {
             _device = device;
             _api = api;
             _tokenService = tokenService;
             _nav = nav;
             _authStateProvider = authStateProvider;
+            _configuration = configuration;
         }
 
         public async Task InitializeAsync()
@@ -32,12 +38,19 @@ namespace MentorshipHub.UI.BusinessLayer.Classes.Auth
 
             if (response.IsSuccess && response.Data != null)
             {
-                await _tokenService.SetTokensAsync(response.Data.AccessToken);
+                await _tokenService.SetTokenAsync(response.Data.AccessToken);
 
                 if (_authStateProvider is JwtAuthStateProvider jwtAuthStateProvider)
                 {
                     jwtAuthStateProvider.NotifyUserAuthentication();
                 }
+            }
+            else
+            {
+                await _tokenService.ClearAsync();
+
+                if (_authStateProvider is JwtAuthStateProvider jwtAuthStateProvider)
+                    jwtAuthStateProvider.NotifyUserLogout();
             }
         }
 
@@ -52,7 +65,7 @@ namespace MentorshipHub.UI.BusinessLayer.Classes.Auth
             if (!response.IsSuccess || response.Data == null)
                 return response.Data!;
 
-            await _tokenService.SetTokensAsync(response.Data.AccessToken);
+            await _tokenService.SetTokenAsync(response.Data.AccessToken);
 
             if (_authStateProvider is JwtAuthStateProvider jwtAuthStateProvider)
             {
@@ -79,23 +92,52 @@ namespace MentorshipHub.UI.BusinessLayer.Classes.Auth
         public async Task Logout()
         {
             string sessionId = string.Empty;
-            await _api.PostAsync<string, bool>("api/auth/logout", sessionId);
             await _tokenService.ClearAsync();
+            await _api.PostAsync<string, bool>("api/auth/logout", sessionId);
             if (_authStateProvider is JwtAuthStateProvider jwtAuthStateProvider)
             {
                 jwtAuthStateProvider.NotifyUserLogout();
             }
+
             _nav.NavigateTo("/login", true);
         }
 
-        public async Task<LoginResponse> LoginWithGoogle()
+        public async Task LoginWithGoogle()
         {
-            var response = new LoginResponse
+            string deviceId = await _device.GetDeviceIdAsync();
+            string deviceName = await _device.GetDeviceNameAsync();
+
+            string url = $"{_configuration["ApiSettings:BaseUrl"]}/api/auth/google-login?deviceId={deviceId}&deviceName={deviceName}";
+
+            _nav.NavigateTo(url);
+        }
+
+        public async Task<(bool success, bool requiresMfa)> HandleExternalLoginCallbackAsync(string url)
+        {
+            var uri = _nav.ToAbsoluteUri(url);
+            var query = QueryHelpers.ParseQuery(uri.Query);
+
+            if (!query.ContainsKey("data"))
+                return (false, false);
+
+            var json = Uri.UnescapeDataString(query["data"]!);
+
+            var response = JsonSerializer.Deserialize<LoginResponse>(json);
+
+            if (response == null || !response.IsSuccess)
+                return (false, false);
+
+            if (!string.IsNullOrEmpty(response.AccessToken))
             {
-                IsSuccess = false,
-                RequiresMfa = true,
-            };
-            return response;
+                await _tokenService.SetTokenAsync(response.AccessToken);
+
+                if (_authStateProvider is JwtAuthStateProvider jwt)
+                    jwt.NotifyUserAuthentication();
+
+                _nav.NavigateTo("/dashboard", true);
+            }
+
+            return (true, response.RequiresMfa);
         }
     }
 }

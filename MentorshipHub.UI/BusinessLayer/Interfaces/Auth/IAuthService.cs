@@ -8,7 +8,8 @@ namespace MentorshipHub.UI.BusinessLayer.Interfaces.Auth
         Task<LoginResponse> LoginAsync(LoginRequest request);
         Task<bool> VerifyOtpAsync(VerifyOtpRequest request);
         Task<bool> ResendOtpAsync(string email);
-        Task<LoginResponse> LoginWithGoogle();
+        Task LoginWithGoogle();
+        Task<(bool success, bool requiresMfa)> HandleExternalLoginCallbackAsync(string url);
         Task Logout();
     }
 }

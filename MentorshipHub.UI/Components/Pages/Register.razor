@@ -253,7 +253,9 @@
 
     async Task RegisterWithGoogle()
     {
-        var response = await AuthService.LoginWithGoogle();
+        await AuthService.LoginWithGoogle();
+
+        var response = new LoginResponse();
 
         if (!response.IsSuccess)
         {
