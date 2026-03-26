@@ -9,9 +9,17 @@
 <VisionSection></VisionSection>
 <OpportunitiesSection></OpportunitiesSection>
 <AudienceSection></AudienceSection>
-<FoundersSection></FoundersSection>
+@if (Isshow)
+{
+    <FoundersSection></FoundersSection>
+}
 <PhilosophySection></PhilosophySection>
 <CtaSection Title="Be Part of the XQARE Journey"
     Subtitle="Join a growing ecosystem of ambitious individuals, mentors, and professionals building meaningful careers together." 
             ExplorePlatformLink="register"></CtaSection>
 <Footer_Site></Footer_Site>
+
+
+@code{
+    public bool Isshow = false;
+}

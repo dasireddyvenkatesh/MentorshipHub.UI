@@ -6,7 +6,15 @@
 <HiringPartnerHeaderWrapper/>
 <FeatureCardSectionWrapper/>
 <PartnerStepsWrapper/>
-<PartnerPricing></PartnerPricing>
+@if (IsShow)
+{
+    <PartnerPricing></PartnerPricing>
+}
 <PartnerInquiryWrapper></PartnerInquiryWrapper>
 <CtaSection GetStartedLink=""></CtaSection>
 <Footer_Site></Footer_Site>
+
+
+@code{
+    public bool IsShow = false;
+}
